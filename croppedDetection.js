@@ -1,61 +1,47 @@
 class croppedDetection {
     constructor() {
         this.img = new Image();
-        this.img.src = "images.png";
+        this.img.src = "images.png"; // source da imagem/CAM
         this.attachCropBox();
     }
 
     attachCropBox() {
-        const margin = { top: 0, right: 0, bottom: 0, left: 0 };
-        const width = this.img.width - margin.left - margin.right;
-        const height = this.img.height - margin.top - margin.bottom;
-        const sourcePoints = [[0, 0], [width, 0], [width, height], [0, height]];
-        const targetPoints = [[0, 0], [width, 0], [width, height], [0, height]];
+        const margin = { top: 0, right: 0, bottom: 0, left: 0 }; // margin da cerca virtual (Não apropriado alterar)
+        const width = this.img.width - margin.left - margin.right; // largura da cerca
+        const height = this.img.height - margin.top - margin.bottom; // altura da cerca
+        const sourcePoints = [[0, 0], [width, 0], [width, height], [0, height]]; // pontos de retorno da cerca
+        const targetPoints = [[0, 0], [width, 0], [width, height], [0, height]]; // target dos pontos 
 
         const svg = d3.select(".container").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width + margin.left + margin.right) // defininindo largura da cerca de acordo com o margin left e right 
+            .attr("height", height + margin.top + margin.bottom) // defininindo altura da cerca de acordo com o margin top e bottom
             .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            .attr("id", "window_g");
+            .attr("transform", `translate(${margin.left} , ${margin.top})`) // posicionando no eixo da imagem a cerca virtual 
+            .attr("id", "crop"); // colocando atributo id para retornar  
 
         const line = svg.selectAll(".line")
             .data(d3.range(0, width + 1, 40).map(function (x) { return [[x, 0], [x, height]]; })
-                .concat(d3.range(0, height + 1, 40).map(function (y) { return [[0, y], [width, y]]; })))
-            .enter().append("path")
-            .attr("class", "line");
-
-        const handle = svg.selectAll(".handle")
+            .concat(d3.range(0, height + 1, 40).map(function (y) { return [[0, y], [width, y]]; })))
+            .enter().append("path") // gerando paths das linhas da cerca virtual
+            .attr("class", "line"); // classe de estilização
+            
+        svg.selectAll(".handle")
             .data(targetPoints)
-            .enter().append("circle")
-            .attr("class", "handle")
-            .attr("transform", function (d) { return "translate(" + d + ")"; })
-            .attr("r", 7)
+            .enter().append("circle") // tipo de ponto pressing nas quinas da cerca
+            .attr("class", "handle") // classe de estilização
+            .attr("transform", function (d) { return `translate(${d})` }) // posicionando a bola de pressing no eixo
+            .attr("r", 8) // raio da bola de pressing nos 4 pontos
             .call(d3.behavior.drag()
-                .origin(function (d) { return { x: d[0], y: d[1] }; })
-                .on("drag", dragged));
+            .origin(function (d) { return { x: d[0], y: d[1] }; }) // definindo tipo de retorno do eixo x e y de acordo com os 4 pontos da cerca
+            .on("drag", dragged));
 
         d3.selectAll("button")
             .datum(function (d) { return JSON.parse(this.getAttribute("data-targets")); })
-            .on("click", clicked)
-            .call(transformed);
-
-        function clicked(d) {
-            d3.transition()
-                .duration(750)
-                .tween("points", function () {
-                    if (!(d == null)) {
-                        var i = d3.interpolate(targetPoints, d);
-                        return function (t) {
-                            handle.data(targetPoints = i(t)).attr("transform", function (d) { return "translate(" + d + ")"; });
-                            transformed();
-                        };
-                    }
-                });
-        }
+            .on("click", transformed())
+            .call(transformed); // executando função para gerar possíveis pontos da imagem
 
         function dragged(d) {
-            d3.select(this).attr("transform", `translate(${(d[0] = d3.event.x)} , ${(d[1] = d3.event.y)})`);
+            d3.select(this).attr("transform", `translate(${(d[0] = d3.event.x)} , ${(d[1] = d3.event.y)})`); // posicionando a bola de pressing nos 4 pontos
             transformed();
         }
 

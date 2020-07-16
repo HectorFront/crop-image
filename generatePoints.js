@@ -1,4 +1,3 @@
-const applyButton = document.getElementById('apply')
 let camWidth;
 let camHeight;
 
@@ -6,7 +5,7 @@ const setUpApplyButton = function () {
     let camImage = new Image();
     camImage.src = "images.png";
     let pointsArray = []
-    const children = document.querySelectorAll('#window_g .handle')
+    const children = document.querySelectorAll('#crop .handle')
     children.forEach(e => {
         const pos = e.getAttribute('transform');
         const point = pos.replace('translate(', '').replace(')', '').split(',')
@@ -25,4 +24,3 @@ const setUpApplyButton = function () {
         }
     )
 }
-applyButton.onclick = setUpApplyButton

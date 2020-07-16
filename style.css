@@ -30,9 +30,9 @@ svg {
 }
 
 .handle {
-  fill: rgba(47, 177, 255, 0.79);
+  fill: rgb(47, 175, 255);
   pointer-events: all;
-  stroke:rgba(47, 177, 255, 0.79);
+  stroke:rgb(47, 175, 255);
   stroke-width: 2px;
   cursor: move;
   opacity: 0.8;
