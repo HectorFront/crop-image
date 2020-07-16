@@ -1,0 +1,39 @@
+body{
+  margin:0;
+  padding: 0;
+}
+.container{
+  display: flex;
+}
+#background{
+width: 100%;
+}
+
+button{
+  width: 80px;
+  height: 30px;
+  border: none;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  
+}
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.line {
+  stroke: rgba(47, 177, 255, 0.79);
+  stroke-width: 1.5px;
+  stroke-linecap: square;
+}
+
+.handle {
+  fill: rgba(47, 177, 255, 0.79);
+  pointer-events: all;
+  stroke:rgba(47, 177, 255, 0.79);
+  stroke-width: 2px;
+  cursor: move;
+  opacity: 0.8;
+}
